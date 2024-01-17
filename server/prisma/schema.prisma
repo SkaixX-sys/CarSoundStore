@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,19 +8,69 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id             Int        @id @default(autoincrement())
+  email          String     @unique
+  name           String?
+  hash           String
+  password       String
+  salt           String
+  isEmailConfirm Boolean
+  isPhoneConfirm Boolean
+  login          String
+  phone          String     @unique
+  CartItem       CartItem[]
 }
 
 model Product {
-  id            Int     @id @default(autoincrement())
-  category      String
-  name          String
-  quantity      Int
-  newPrice      Decimal
-  oldPrice      Decimal
-  purchasePrice Decimal
-  retailPrice   Decimal
-  
+  id                Int                 @id @default(autoincrement())
+  name              String
+  quantity          Int
+  newPrice          Decimal
+  oldPrice          Decimal
+  purchasePrice     Decimal
+  retailPrice       Decimal
+  categoryId        Int
+  rating            Int
+  summaryOrders     Int
+  CartItem          CartItem[]
+  category          Category            @relation(fields: [categoryId], references: [id])
+  ProductDetailItem ProductDetailItem[]
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  cartItemId Int
+  cartItem   CartItem @relation(fields: [cartItemId], references: [id])
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  quantity  Int
+  userId    Int
+  product   Product @relation(fields: [productId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+  Order     Order[]
+}
+
+model Category {
+  id           Int       @id @default(autoincrement())
+  mainCategory String
+  category     String
+  Product      Product[]
+}
+
+model ProductDetailItem {
+  id               Int            @id @default(autoincrement())
+  productId        Int
+  productDetailsId Int
+  productDetailId  ProductDetails @relation(fields: [productDetailsId], references: [id])
+  product          Product        @relation(fields: [productId], references: [id])
+}
+
+model ProductDetails {
+  id                Int                 @id @default(autoincrement())
+  title             String
+  detail            String
+  ProductDetailItem ProductDetailItem[]
 }
