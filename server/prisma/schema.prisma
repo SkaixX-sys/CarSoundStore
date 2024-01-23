@@ -9,15 +9,13 @@ datasource db {
 
 model User {
   id             Int        @id @default(autoincrement())
-  email          String     @unique
-  name           String?
+  email          String?     @unique
   hash           String
-  password       String
   salt           String
-  isEmailConfirm Boolean
-  isPhoneConfirm Boolean
-  login          String
-  phone          String     @unique
+  login          String?
+  isEmailConfirm Boolean?    @default(false)
+  isPhoneConfirm Boolean?   @default(false)
+  phone          String?    @unique
   CartItem       CartItem[]
 }
 
