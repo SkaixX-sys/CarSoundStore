@@ -9,14 +9,22 @@ datasource db {
 
 model User {
   id             Int        @id @default(autoincrement())
-  email          String?     @unique
+  email          String?    @unique
   hash           String
   salt           String
   login          String?
-  isEmailConfirm Boolean?    @default(false)
+  isEmailConfirm Boolean?   @default(false)
   isPhoneConfirm Boolean?   @default(false)
   phone          String?    @unique
   CartItem       CartItem[]
+  account        Account?
+}
+
+model Account {
+  id               Int     @id @default(autoincrement())
+  ownerId          Int     @unique
+  owner            User    @relation(fields: [ownerId], references: [id])
+  isBlockingEnable Boolean
 }
 
 model Product {
@@ -25,13 +33,13 @@ model Product {
   quantity          Int
   newPrice          Decimal
   oldPrice          Decimal
-  purchasePrice     Decimal
-  retailPrice       Decimal
-  categoryId        Int
-  rating            Int
-  summaryOrders     Int
+  purchasePrice     Decimal?
+  retailPrice       Decimal?
+  categoryId        Int?
+  rating            Int?                @default(0)
+  summaryOrders     Int?                @default(0)
   CartItem          CartItem[]
-  category          Category            @relation(fields: [categoryId], references: [id])
+  category          Category?           @relation(fields: [categoryId], references: [id])
   ProductDetailItem ProductDetailItem[]
 }
 
