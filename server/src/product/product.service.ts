@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
 import { ProductItemDto } from './dto';
 
@@ -6,24 +6,47 @@ import { ProductItemDto } from './dto';
 export class ProductService {
     constructor(private db: DbService) { }
 
-    async findManyProducts() {
-        await this.db.product.findMany()
+    async findOneProductById(productId: number) {
+
+        const product = await this.db.product.findFirst({ where: { id: Number(productId) } })
+        if (!product) {
+            throw new NotFoundException
+        }
+        return product
     }
 
-    async findOneProductById(productId: number) {
-        await this.db.product.findFirst({ where: { id: productId } })
+    async findManyProducts() {
+        const products = await this.db.product.findMany()
+        if (!products) {
+            throw new NotFoundException
+        }
+        return products
     }
 
     async createProduct(product: ProductItemDto) {
-        await this.db.product.create({ data: { ...product } })
+        try {
+            return await this.db.product.create({ data: { ...product } })
+        } catch (error) {
+            throw new BadRequestException
+        }
     }
 
     async patchProduct(product: ProductItemDto, productId: number) {
-        await this.db.product.update({ data: { ...product }, where: { id: productId } })
+        console.log(productId);
+
+        try {
+            return await this.db.product.update({ data: { ...product }, where: { id: Number(productId) } })
+        } catch (error) {
+            throw new BadRequestException
+        }
     }
 
     async deleteOneProduct(productId: number) {
-        await this.db.product.delete({ where: { id: productId } })
+        try {
+            await this.db.product.delete({ where: { id: Number(productId) } })
+        } catch (error) {
+            throw new NotFoundException
+        }
     }
 
 

@@ -1,42 +1,51 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { ProductItemDto } from './dto';
-import { Response } from 'express';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('product')
 @ApiTags("products")
 export class ProductController {
     constructor(private productService: ProductService) { }
 
-    @Get('get-product')
+    @Get('get-product/:productId')
     @ApiOkResponse()
-    async getProduct(productId: number) {
+    async getProduct(@Param('productId') productId: number) {
+
+        if (!productId) {
+            throw new BadRequestException
+        }
+
         return await this.productService.findOneProductById(productId)
     }
 
     @Get('get-many-products')
     @ApiOkResponse()
     async getManyProducts() {
-        return await this.productService.findManyProducts()
+        const products = await this.productService.findManyProducts()
+        return products
     }
 
     @Post('create-product')
     @ApiCreatedResponse()
+    @UseGuards(AuthGuard)
     async createProduct(@Body() body: ProductItemDto) {
         return await this.productService.createProduct(body)
     }
 
-    @Patch('patch-product')
+    @Patch('patch-product/:productId')
     @ApiCreatedResponse()
-    async patchProduct(@Body() body: ProductItemDto, id: number) {
-        return await this.productService.patchProduct(body, id)
+    @UseGuards(AuthGuard)
+    async patchProduct(@Body() body: ProductItemDto, @Param('productId') productId: number) {
+        return await this.productService.patchProduct(body, productId)
     }
 
-    @Delete('delete-product')
+    @Delete('delete-product/:productId')
     @ApiOkResponse()
-    async deleteOneProductById(id: number) {
-        return await this.productService.deleteOneProduct(id)
+    @UseGuards(AuthGuard)
+    async deleteOneProductById(@Param('productId') productId: number) {
+        return await this.productService.deleteOneProduct(productId)
     }
 
 
