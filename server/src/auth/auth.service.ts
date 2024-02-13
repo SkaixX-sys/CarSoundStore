@@ -18,10 +18,12 @@ export class AuthService {
             throw new BadRequestException({ type: "email-exist" })
         }
 
+        let role: string = "user"
+
         const salt = this.passwordService.getSalt()
         const hash = this.passwordService.getHash(password, salt)
 
-        const newUser = await this.usersService.create(email, hash, salt)
+        const newUser = await this.usersService.create(email, hash, salt, role)
 
         const accessToken = await this.jwtService.signAsync({ id: newUser.id, email: newUser.email })
 

@@ -12,6 +12,7 @@ model User {
   email          String?    @unique
   hash           String
   salt           String
+  role           String?
   login          String?
   isEmailConfirm Boolean?   @default(false)
   isPhoneConfirm Boolean?   @default(false)

@@ -10,7 +10,7 @@ export class UsersService {
         return this.db.user.findFirst({ where: { email } })
     }
 
-    create(email: string, hash: string, salt: string) {
-        return this.db.user.create({ data: { email, hash, salt } })
+    create(email: string, hash: string, salt: string, role: string) {
+        return this.db.user.create({ data: { email, hash, salt, role } })
     }
 }

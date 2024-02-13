@@ -3,9 +3,9 @@ import { SignInBodyDto, SignUpBodyDto, getSessionInfoDto } from './dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { Response } from 'express'
-import { CookieService } from './cookie.service';
 import { AuthGuard } from './auth.guard';
 import { SessionInfo } from './session-info.decorator';
+import { CookieService } from 'src/cookie/cookie.service';
 
 @Controller('auth')
 @ApiTags('auth api')
